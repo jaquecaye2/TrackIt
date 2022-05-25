@@ -1,0 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Playball&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+* {
+  box-sizing: border-box;
+  --cor-branca: #ffffff;
+  --cor-fundo: #f2f2f2;
+  --cor-header: #126ba5;
+  --cor-texto: #666666;
+  --cor-detalhes: #52b6ff;
+  --cor-input: #dbdbdb;
+  --cor-inputPreenchido: #cfcfcf;
+  --cor-habitoConcluido: #8fc549;
+  --cor-habitoNaoConcluido: #e7e7e7;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: "Lexend Deca", sans-serif;
+}
+
+div.root {
+  width: 100%;
+  height: 100%;
+}
