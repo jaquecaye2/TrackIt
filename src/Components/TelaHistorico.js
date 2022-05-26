@@ -3,7 +3,8 @@ import styled from "styled-components";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function TelaHistorico() {
+export default function TelaHistorico({token}) {
+
   return (
     <TelaHistoricoStyle>
       <Header />

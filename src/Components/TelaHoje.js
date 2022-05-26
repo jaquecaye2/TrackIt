@@ -29,7 +29,8 @@ function Habitos() {
   );
 }
 
-export default function TelaHoje() {
+export default function TelaHoje({token}) {
+
   return (
     <TelaHojeStyle>
       <Header />

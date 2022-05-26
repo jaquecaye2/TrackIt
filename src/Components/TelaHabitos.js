@@ -50,7 +50,8 @@ function HabitosCriados() {
   );
 }
 
-export default function TelaHabitos() {
+export default function TelaHabitos({token}) {
+
   const dias = ["D", "S", "T", "Q", "Q", "S", "S"];
 
   const [novoHabito, setNovoHabito] = React.useState(null);
