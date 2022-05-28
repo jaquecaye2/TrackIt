@@ -29,11 +29,11 @@ function Habitos() {
   );
 }
 
-export default function TelaHoje({token}) {
+export default function TelaHoje({token, imagemPerfil}) {
 
   return (
     <TelaHojeStyle>
-      <Header />
+      <Header imagemPerfil={imagemPerfil} />
       <Cabecalho>
         <h2>Segunda, 17/05</h2>
         <p>Nenhum hábito concluído ainda</p>

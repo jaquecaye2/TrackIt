@@ -7,7 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import Button from "./shared/Button";
 import logo from "../assets/images/logo.png";
 
-export default function TelaLogin({ setToken }) {
+export default function TelaLogin({ setToken, setImagemPerfil }) {
   const [email, setEmail] = React.useState("");
   const [senha, setSenha] = React.useState("");
 
@@ -38,6 +38,7 @@ export default function TelaLogin({ setToken }) {
       .then((response) => {
         console.log(response.data);
         setToken(response.data.token);
+        setImagemPerfil(response.data.image)
         navigate("/hoje");
       })
       .catch((error) => {

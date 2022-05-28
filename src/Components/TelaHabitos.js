@@ -1,10 +1,12 @@
 import styled from "styled-components";
 import React from "react";
+import axios from "axios";
+import { ThreeDots } from "react-loader-spinner";
 
 import Header from "./Header";
 import Footer from "./Footer";
 
-function DiaSemana({ dia }) {
+function DiaSemana({ dia, setDiasSelecionados, diasSelecionados, disabled }) {
   const [corDiaSelecionado, setCorDiaSelecionado] = React.useState("#dbdbdb");
   const [backgroundDiaSelecionado, setBackgroundDiaSelecionado] =
     React.useState("#ffffff");
@@ -13,9 +15,15 @@ function DiaSemana({ dia }) {
     if (corDiaSelecionado === "#dbdbdb") {
       setCorDiaSelecionado("#ffffff");
       setBackgroundDiaSelecionado("#cfcfcf;");
+      setDiasSelecionados([...diasSelecionados, dia.id]);
     } else if (corDiaSelecionado === "#ffffff") {
       setCorDiaSelecionado("#dbdbdb");
       setBackgroundDiaSelecionado("#ffffff;");
+      for (let i = 0; i < diasSelecionados.length; i++) {
+        if (diasSelecionados[i] === dia.id) {
+          diasSelecionados.splice(diasSelecionados.indexOf(dia.id), 1);
+        }
+      }
     }
   }
 
@@ -24,38 +32,139 @@ function DiaSemana({ dia }) {
       onClick={selecionarDia}
       color={corDiaSelecionado}
       background={backgroundDiaSelecionado}
+      disabled={disabled}
     >
-      {dia}
+      {dia.name}
     </CaixaDiaSemana>
   );
 }
 
-function HabitosCriados() {
-  const dias = ["D", "S", "T", "Q", "Q", "S", "S"];
+function DiaSemanaSelecionado({ dia, diasSelecionados }) {
+  const [corDiaSelecionado, setCorDiaSelecionado] = React.useState("#dbdbdb");
+  const [backgroundDiaSelecionado, setBackgroundDiaSelecionado] =
+    React.useState("#ffffff");
+
+  React.useEffect(() => {
+    for (let i = 0; i < diasSelecionados.length; i++) {
+      if (diasSelecionados[i] === dia.id) {
+        setCorDiaSelecionado("#ffffff");
+        setBackgroundDiaSelecionado("#cfcfcf;");
+      }
+    }
+  }, []);
+
+  return (
+    <CaixaDiaSemanaSelecionado
+      color={corDiaSelecionado}
+      background={backgroundDiaSelecionado}
+    >
+      {dia.name}
+    </CaixaDiaSemanaSelecionado>
+  );
+}
+
+function HabitoCriados({ token, habito, habitos, setHabitos }) {
+  const dias = [
+    { name: "D", id: 1 },
+    { name: "S", id: 2 },
+    { name: "T", id: 3 },
+    { name: "Q", id: 4 },
+    { name: "Q", id: 5 },
+    { name: "S", id: 6 },
+    { name: "S", id: 7 },
+  ];
+
+  function removerHabito() {
+    let resultado = window.confirm("Você deseja confirmar a remoção?");
+
+    if (resultado === true) {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const promise = axios.delete(
+        `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habito.id}`,
+        config
+      );
+
+      promise
+        .then((response) => {
+          let listaHabitosRestantes = habitos.filter(
+            (habitonovo) => habitonovo.id !== habito.id
+          );
+          setHabitos(listaHabitosRestantes);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }
 
   return (
     <CaixaHabito>
       <CaracteristicasHabitos>
-        <p>Ler 1 capítulo de livro</p>
+        <p>{habito.name}</p>
         <div>
           {dias.map((dia, index) => (
-            <DiaSemana key={index} dia={dia} />
+            <DiaSemanaSelecionado
+              key={index}
+              dia={dia}
+              diasSelecionados={habito.days}
+            />
           ))}
         </div>
       </CaracteristicasHabitos>
       <BotaoDeletar>
-        <ion-icon name="trash-outline"></ion-icon>
+        <ion-icon name="trash-outline" onClick={removerHabito}></ion-icon>
       </BotaoDeletar>
     </CaixaHabito>
   );
 }
 
-export default function TelaHabitos({token}) {
-
-  const dias = ["D", "S", "T", "Q", "Q", "S", "S"];
-
+export default function TelaHabitos({ token, imagemPerfil }) {
   const [novoHabito, setNovoHabito] = React.useState(null);
   const [habitos, setHabitos] = React.useState([]);
+
+  const dias = [
+    { name: "D", id: 1 },
+    { name: "S", id: 2 },
+    { name: "T", id: 3 },
+    { name: "Q", id: 4 },
+    { name: "Q", id: 5 },
+    { name: "S", id: 6 },
+    { name: "S", id: 7 },
+  ];
+
+  const [nomeHabito, setNomeHabito] = React.useState("");
+  const [diasSelecionados, setDiasSelecionados] = React.useState([]);
+
+  const [corInput, setCorInput] = React.useState("#666666");
+  const [backgroundInput, setBackgroundInput] = React.useState("#ffffff");
+  const [disabled, setDisabled] = React.useState(false);
+  const [carregando, setCarregando] = React.useState(false);
+
+  React.useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const promise = axios.get(
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+      config
+    );
+
+    promise
+      .then((response) => {
+        setHabitos(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   function criarNovoHabito() {
     if (novoHabito === null) {
@@ -66,58 +175,118 @@ export default function TelaHabitos({token}) {
   }
 
   function salvarHabito() {
-    setHabitos([...habitos, "novo"]);
-    setNovoHabito(null);
+    setCorInput("#B3B3B3");
+    setBackgroundInput("#D4D4D4");
+    setDisabled(true);
+    setCarregando(true);
+
+    const habitoCriado = {
+      name: nomeHabito,
+      days: diasSelecionados,
+    };
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const promise = axios.post(
+      "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",
+      habitoCriado,
+      config
+    );
+
+    promise
+      .then((response) => {
+        setDiasSelecionados([]);
+        setHabitos([...habitos, response.data]);
+        setNomeHabito("");
+        setNovoHabito(null);
+        setCorInput("#666666");
+        setBackgroundInput("#ffffff");
+        setDisabled(false);
+        setCarregando(false);
+      })
+      .catch((error) => {
+        alert(`${error} - Tente novamente`);
+        setCorInput("#666666");
+        setBackgroundInput("#ffffff");
+        setDisabled(false);
+        setCarregando(false);
+      });
   }
 
-  function cancelarHabito(){
+  function cancelarHabito() {
     setNovoHabito(null);
   }
-
-  console.log(habitos);
 
   return (
     <TelaHabitosStyle>
-      <Header />
-      <Cabecalho>
-        <p>Meus hábitos</p>
-        <button onClick={criarNovoHabito}>+</button>
-      </Cabecalho>
+      <Header imagemPerfil={imagemPerfil} />
+      <Container>
+        <Cabecalho>
+          <p>Meus hábitos</p>
+          <button onClick={criarNovoHabito}>+</button>
+        </Cabecalho>
 
-      {/* Lógica para abrir a caixa para criar um hábito quando clicado no + */}
-      {novoHabito ? (
-        <HabitoStyle>
-          <input
-            type="text"
-            name="nomeHabito"
-            id="nomeHabito"
-            placeholder="nome do hábito"
-          />
-          <BotoesDiasStyle>
-            {dias.map((dia, index) => (
-              <DiaSemana key={index} dia={dia} />
+        {novoHabito ? (
+          <HabitoStyle color={corInput} background={backgroundInput}>
+            <input
+              type="text"
+              name="nomeHabito"
+              id="nomeHabito"
+              placeholder="nome do hábito"
+              value={nomeHabito}
+              onChange={(e) => setNomeHabito(e.target.value)}
+              required
+              disabled={disabled}
+            />
+            <BotoesDiasStyle>
+              {dias.map((dia, index) => (
+                <DiaSemana
+                  key={index}
+                  dia={dia}
+                  setDiasSelecionados={setDiasSelecionados}
+                  diasSelecionados={diasSelecionados}
+                  disabled={disabled}
+                />
+              ))}
+            </BotoesDiasStyle>
+            <BotoesAcoes>
+              <p onClick={cancelarHabito}>Cancelar</p>
+
+              {
+                carregando ?
+                <button><ThreeDots color="#ffffff" height={20} width={35} /></button> :
+                <button onClick={salvarHabito}>Salvar</button>
+              }
+              
+            </BotoesAcoes>
+          </HabitoStyle>
+        ) : null}
+
+        {habitos.length === 0 ? (
+          <Paragrafo>
+            <p>
+              Você não tem nenhum hábito cadastrado ainda. Adicione um hábito
+              para começar a trackear!
+            </p>
+          </Paragrafo>
+        ) : (
+          <div>
+            {habitos.map((habito, index) => (
+              <HabitoCriados
+                key={index}
+                token={token}
+                habito={habito}
+                setHabitos={setHabitos}
+                habitos={habitos}
+              />
             ))}
-          </BotoesDiasStyle>
-          <BotoesAcoes>
-            <p onClick={cancelarHabito}>Cancelar</p>
-            <button onClick={salvarHabito}>Salvar</button>
-          </BotoesAcoes>
-        </HabitoStyle>
-      ) : null}
-
-      {/* LÓGICA PARA RENDERIZAR OS HÁBITOS CRIADOS, SE HOUVE */}
-      {habitos.length === 0 ? (
-        <Paragrafo>
-          <p>
-            Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para
-            começar a trackear!
-          </p>
-        </Paragrafo>
-      ) : (
-        <div>
-          <HabitosCriados />
-        </div>
-      )}
+          </div>
+        )}
+      </Container>
 
       <Footer />
     </TelaHabitosStyle>
@@ -159,6 +328,11 @@ const Cabecalho = styled.div`
   }
 `;
 
+const Container = styled.div`
+  padding-bottom: 70px;
+  background-color: var(--cor-fundo);
+`;
+
 const HabitoStyle = styled.div`
   background-color: var(--cor-branca);
   margin: 0 20px 20px 20px;
@@ -172,7 +346,8 @@ const HabitoStyle = styled.div`
     border: 1px solid var(--cor-input);
     padding: 0 10px;
     font-size: 20px;
-    color: var(--cor-texto);
+    color: ${(props) => props.color};
+    background-color: ${(props) => props.background};
     border-radius: 5px;
 
     &::placeholder {
@@ -204,6 +379,17 @@ const CaixaDiaSemana = styled.button`
   }
 `;
 
+const CaixaDiaSemanaSelecionado = styled.button`
+  margin: 0 2px;
+  width: 30px;
+  height: 30px;
+  background-color: ${(props) => props.background};
+  border: 1px solid var(--cor-input);
+  border-radius: 5px;
+  color: ${(props) => props.color};
+  font-size: 20px;
+`;
+
 const BotoesAcoes = styled.div`
   height: 40px;
   display: flex;
@@ -229,6 +415,9 @@ const BotoesAcoes = styled.div`
     border-radius: 5px;
     color: var(--cor-branca);
     font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
       filter: brightness(0.8);

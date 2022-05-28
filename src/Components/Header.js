@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-export default function Header(){
+export default function Header({imagemPerfil}){
     return(
         <HeaderStyle>
             <h1>TrackIt</h1>
-            <img src="https://i.pinimg.com/736x/18/d3/44/18d34446c12fa107a116fed730cbc95d.jpg" alt="foto de perfil"/>
+            <img src={imagemPerfil} alt="Foto de pergil"/>
         </HeaderStyle>
     )
 }
@@ -21,6 +21,7 @@ const HeaderStyle = styled.div`
     height: 70px;
     background-color: var(--cor-header);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+    z-index: 1;
 
     h1{
         font-family: 'Playball', cursive;

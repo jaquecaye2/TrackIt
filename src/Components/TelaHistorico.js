@@ -3,11 +3,11 @@ import styled from "styled-components";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function TelaHistorico({token}) {
+export default function TelaHistorico({token, imagemPerfil}) {
 
   return (
     <TelaHistoricoStyle>
-      <Header />
+      <Header imagemPerfil={imagemPerfil}/>
       <Cabecalho>
         <p>Histórico</p>
       </Cabecalho>
