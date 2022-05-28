@@ -65,13 +65,13 @@ function DiaSemanaSelecionado({ dia, diasSelecionados }) {
 
 function HabitoCriados({ token, habito, habitos, setHabitos }) {
   const dias = [
-    { name: "D", id: 1 },
-    { name: "S", id: 2 },
-    { name: "T", id: 3 },
+    { name: "D", id: 0 },
+    { name: "S", id: 1 },
+    { name: "T", id: 2 },
+    { name: "Q", id: 3 },
     { name: "Q", id: 4 },
-    { name: "Q", id: 5 },
+    { name: "S", id: 5 },
     { name: "S", id: 6 },
-    { name: "S", id: 7 },
   ];
 
   function removerHabito() {
@@ -128,13 +128,13 @@ export default function TelaHabitos({ token, imagemPerfil }) {
   const [habitos, setHabitos] = React.useState([]);
 
   const dias = [
-    { name: "D", id: 1 },
-    { name: "S", id: 2 },
-    { name: "T", id: 3 },
+    { name: "D", id: 0 },
+    { name: "S", id: 1 },
+    { name: "T", id: 2 },
+    { name: "Q", id: 3 },
     { name: "Q", id: 4 },
-    { name: "Q", id: 5 },
+    { name: "S", id: 5 },
     { name: "S", id: 6 },
-    { name: "S", id: 7 },
   ];
 
   const [nomeHabito, setNomeHabito] = React.useState("");
