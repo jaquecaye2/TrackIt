@@ -1,15 +1,38 @@
 import styled from "styled-components";
 
 import { Link } from "react-router-dom";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 
-export default function Footer() {
+export default function Footer({ porcentagemConcluida }) {
   return (
     <FooterStyle>
       <div>
         <Link to="/habitos">Hábitos</Link>
       </div>
-      <div><Link to="/hoje">Hoje</Link></div>
-      <div><Link to="/historico">Histórico</Link></div>
+      <div className="divHoje">
+        <Link to="/hoje">
+          <CircularProgressbar
+            value={porcentagemConcluida}
+            className="barraProgresso"
+            strokeWidth={8}
+            text={`Hoje`}
+            background
+            backgroundPadding={6}
+            styles={buildStyles({
+              backgroundColor: "#52B6FF",
+              textColor: "#ffffff",
+              pathColor: "#ffffff",
+              trailColor: "transparent",
+              strokeLinecap: "round",
+              textSize: "19px",
+              pathTransitionDuration: 0.3,
+            })}
+          />
+        </Link>
+      </div>
+      <div>
+        <Link to="/historico">Histórico</Link>
+      </div>
     </FooterStyle>
   );
 }
@@ -29,8 +52,8 @@ const FooterStyle = styled.div`
   a {
     text-decoration: none;
 
-    &:visited{
-        color: var(--cor-detalhes);
+    &:visited {
+      color: var(--cor-detalhes);
     }
   }
 
@@ -44,5 +67,16 @@ const FooterStyle = styled.div`
     &:hover {
       filter: brightness(0.4);
     }
+  }
+
+  div.divHoje {
+    width: 91px;
+    height: 91px;
+    margin-bottom: 50px;
+  }
+
+  .barraProgresso {
+    dominant-baseline: middle;
+    text-anchor: middle;
   }
 `;

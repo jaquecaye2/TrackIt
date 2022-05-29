@@ -54,7 +54,7 @@ function Habito({ token, habito, setHabitosDeHoje }) {
       promise
         .then((response) => {
           setCorIcone("#8fc549");
-          renderizarHabitosDiarios()
+          renderizarHabitosDiarios();
         })
         .catch((error) => {
           console.log(error);
@@ -77,7 +77,7 @@ function Habito({ token, habito, setHabitosDeHoje }) {
       promise
         .then((response) => {
           setCorIcone("#e7e7e7");
-          renderizarHabitosDiarios()
+          renderizarHabitosDiarios();
         })
         .catch((error) => {
           console.log(error);
@@ -89,8 +89,21 @@ function Habito({ token, habito, setHabitosDeHoje }) {
     <CaixaHabito>
       <NomeHabito>
         <h3>{habito.name}</h3>
-        <p>Sequência atual: {habito.currentSequence} dias</p>
-        <p>Seu recorde: {habito.highestSequence} dias</p>
+        {habito.done === true ? (
+          <p className="concluido">
+            Sequência atual: {habito.currentSequence} dias
+          </p>
+        ) : (
+          <p>Sequência atual: {habito.currentSequence} dias</p>
+        )}
+        {habito.currentSequence >= habito.highestSequence &&
+        habito.highestSequence !== 0 ? (
+          <p className="concluido">
+            Seu recorde: {habito.highestSequence} dias
+          </p>
+        ) : (
+          <p>Seu recorde: {habito.highestSequence} dias</p>
+        )}
       </NomeHabito>
       <IconeHabito color={corIcone}>
         <ion-icon name="checkbox" onClick={habitoConcluido}></ion-icon>
@@ -99,7 +112,12 @@ function Habito({ token, habito, setHabitosDeHoje }) {
   );
 }
 
-export default function TelaHoje({ token, imagemPerfil }) {
+export default function TelaHoje({
+  token,
+  imagemPerfil,
+  porcentagemConcluida,
+  setPorcentagemConcluida,
+}) {
   const [habitosDeHoje, setHabitosDeHoje] = React.useState([]);
 
   const dayjs = require("dayjs");
@@ -156,6 +174,21 @@ export default function TelaHoje({ token, imagemPerfil }) {
     renderizarHabitosDiarios();
   }, []);
 
+  let contador = 0;
+  let habitosConcluidos = false;
+
+  for (let i = 0; i < habitosDeHoje.length; i++) {
+    if (habitosDeHoje[i].done === true) {
+      contador += 1;
+    }
+  }
+
+  if (contador !== 0) {
+    habitosConcluidos = true;
+  }
+
+  porcentagemConcluida = (contador / habitosDeHoje.length) * 100;
+  setPorcentagemConcluida(porcentagemConcluida)
 
   return (
     <TelaHojeStyle>
@@ -164,7 +197,13 @@ export default function TelaHoje({ token, imagemPerfil }) {
         <h2>
           {diaSemana}, {dayjs().$D}/{dayjs().$M + 1}
         </h2>
-        <p>Nenhum hábito concluído ainda</p>
+        {habitosConcluidos ? (
+          <p className="habitosConcluidos">
+            {porcentagemConcluida}% dos hábitos concluídos
+          </p>
+        ) : (
+          <p>Nenhum hábito concluído ainda</p>
+        )}
       </Cabecalho>
       <div>
         {habitosDeHoje.map((habito, index) => (
@@ -177,7 +216,7 @@ export default function TelaHoje({ token, imagemPerfil }) {
           />
         ))}
       </div>
-      <Footer />
+      <Footer porcentagemConcluida={porcentagemConcluida} />
     </TelaHojeStyle>
   );
 }
@@ -202,6 +241,10 @@ const Cabecalho = styled.div`
     font-size: 18px;
     line-height: 25px;
   }
+
+  p.habitosConcluidos {
+    color: #8fc549;
+  }
 `;
 
 const CaixaHabito = styled.div`
@@ -225,6 +268,10 @@ const NomeHabito = styled.div`
   p {
     font-size: 13px;
     margin-bottom: 4px;
+  }
+
+  p.concluido {
+    color: #8fc549;
   }
 `;
 

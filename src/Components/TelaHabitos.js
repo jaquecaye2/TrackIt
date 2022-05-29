@@ -123,7 +123,7 @@ function HabitoCriados({ token, habito, habitos, setHabitos }) {
   );
 }
 
-export default function TelaHabitos({ token, imagemPerfil }) {
+export default function TelaHabitos({ token, imagemPerfil, porcentagemConcluida }) {
   const [novoHabito, setNovoHabito] = React.useState(null);
   const [habitos, setHabitos] = React.useState([]);
 
@@ -288,7 +288,7 @@ export default function TelaHabitos({ token, imagemPerfil }) {
         )}
       </Container>
 
-      <Footer />
+      <Footer porcentagemConcluida={porcentagemConcluida}/>
     </TelaHabitosStyle>
   );
 }

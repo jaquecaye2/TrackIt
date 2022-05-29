@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function TelaHistorico({token, imagemPerfil}) {
+export default function TelaHistorico({token, imagemPerfil, porcentagemConcluida}) {
 
   return (
     <TelaHistoricoStyle>
@@ -16,7 +16,7 @@ export default function TelaHistorico({token, imagemPerfil}) {
           Em breve você poderá ver o histórico dos seus hábitos aqui!
         </p>
       </Paragrafo>
-      <Footer />
+      <Footer porcentagemConcluida={porcentagemConcluida}/>
     </TelaHistoricoStyle>
   );
 }
